@@ -14,7 +14,6 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 var data = JSON.parse(response);
-                window.location.href = data.checkout_url;
             },
             error: function(error) {
                 console.error('Error:', error);

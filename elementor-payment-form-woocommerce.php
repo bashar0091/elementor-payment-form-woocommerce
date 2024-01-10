@@ -14,7 +14,7 @@
 
 // Prevent direct access to the plugin file
 defined( 'ABSPATH' ) || exit;
-
+print_r($_SESSION['form_data']);
 /**
  * 
  * Require All Css Files Here
@@ -118,9 +118,61 @@ function form_payment_field_register($wp_customize) {
 }
 add_action('customize_register', 'form_payment_field_register');
 
+
+//button click , all data get in this response
+function send_custom_webhook( $record, $handler) {
+
+    session_start();
+
+    $form_name = $record->get_form_settings( 'form_name' );
+
+    $form_name_id = !empty(get_theme_mod('form_name_1')) ? get_theme_mod('form_name_1') : '';
+    if ( $form_name_id !== $form_name ) {
+        return;
+    }
+
+    $raw_fields = $record->get( 'fields' );
+    $fields = [];
+    foreach ( $raw_fields as $id => $field ) {
+        $fields[ $id ] = $field['value'];
+    }
+
+    $_SESSION['form_data'] = $fields;
+
+    
+}
+add_action( 'elementor_pro/forms/new_record', 'send_custom_webhook', 10, 2 );
+
+//=========================
+
+function send_custom_webhook2( $record, $handler) {
+
+    session_start();
+
+    $form_name = $record->get_form_settings( 'form_name' );
+
+    $form_name_id = !empty(get_theme_mod('form_name_2')) ? get_theme_mod('form_name_2') : '';
+    if ( $form_name_id !== $form_name ) {
+        return;
+    }
+
+    $raw_fields = $record->get( 'fields' );
+    $fields = [];
+    foreach ( $raw_fields as $id => $field ) {
+        $fields[ $id ] = $field['value'];
+    }
+
+    $_SESSION['form_data'] = $fields;
+
+    
+}
+add_action( 'elementor_pro/forms/new_record', 'send_custom_webhook2', 10, 2 );
+
+
+
 // update woocommerce checkout 
 function modify_checkout_fields($fields) {
-    session_start();
+	session_start();
     $user_first_name = isset($_SESSION['form_data']) ? $_SESSION['form_data']['applicant_name'] : '';
     $user_email_add = isset($_SESSION['form_data']) ? $_SESSION['form_data']['email'] : '';
     $user_telephone = isset($_SESSION['form_data']) ? $_SESSION['form_data']['phone'] : '';
